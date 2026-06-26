@@ -169,10 +169,16 @@ class InpaintBackend(TryOnBackend):
 
     name = "inpaint"
 
-    def __init__(self, model_id="runwayml/stable-diffusion-inpainting",
-                 device=None, use_ip_adapter=None):
+    def __init__(self, model_id=None, device=None, use_ip_adapter=None):
         import torch
         from diffusers import StableDiffusionInpaintPipeline
+
+        # O 'runwayml/stable-diffusion-inpainting' foi removido do HF. Usamos o mirror
+        # oficial da comunidade (stable-diffusion-v1-5/...). Configurável por ambiente.
+        if model_id is None:
+            model_id = os.environ.get(
+                "TRYON_INPAINT_MODEL", "stable-diffusion-v1-5/stable-diffusion-inpainting"
+            )
 
         # Permite desligar o IP-Adapter por ambiente (TRYON_IP_ADAPTER=0) para caber
         # em GPUs/memória pequenas (ex.: Mac de 8 GB): sem IP-Adapter ativa-se o
